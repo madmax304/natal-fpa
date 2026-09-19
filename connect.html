@@ -1,18 +1,54 @@
 <!doctype html>
 <html lang="en"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Connect</title><link rel="stylesheet" href="style.css"></head>
+<title>Connect</title><link rel="stylesheet" href="style.css">
+<style>
+  #landing { display: none; }
+  .code { font: 13px/1.5 ui-monospace, SFMono-Regular, Menlo, monospace;
+    background: color-mix(in srgb, var(--fg) 6%, transparent);
+    border: 1px solid var(--line); border-radius: 6px; padding: 12px;
+    word-break: break-all; margin: 8px 0 20px; }
+  .label { color: var(--muted); font-size: 0.8125rem; text-transform: uppercase;
+    letter-spacing: 0.04em; margin-bottom: 4px; }
+</style></head>
 <body><main>
 <h1>Connect</h1>
 <p class="sub">Natal FP&amp;A — internal QuickBooks Online integration</p>
 
-<p>Natal FP&amp;A is an internal tool and is not available for public connection.</p>
-<p>An authorized Natal administrator connects it by running the local authorization command,
-which opens Intuit&rsquo;s consent screen and requires signing in as an administrator of the Natal
-QuickBooks Online company.</p>
-<p>Connecting grants read-only access to accounting data. It can be revoked at any time — see
-<a href="disconnect.html">Disconnect</a>.</p>
+<section id="intro">
+  <p>Natal FP&amp;A is an internal tool and is not available for public connection.</p>
+  <p>An authorized Natal administrator connects it by running the local authorization
+  command, which opens Intuit&rsquo;s consent screen and requires signing in as an
+  administrator of the Natal QuickBooks Online company.</p>
+  <p>Connecting grants read-only access to accounting data. It can be revoked at any
+  time &mdash; see <a href="disconnect.html">Disconnect</a>.</p>
+</section>
+
+<section id="landing">
+  <h2>Authorization received</h2>
+  <p>Copy the full address of this page back into the terminal where the authorization
+  command is waiting. The values below are shown so you can confirm they arrived.</p>
+  <div class="label">Company (realm) ID</div>
+  <div class="code" id="realm"></div>
+  <div class="label">Authorization code</div>
+  <div class="code" id="code"></div>
+  <p>This code is single-use and expires within minutes. Nothing on this page is sent
+  anywhere &mdash; it is read from the address bar and displayed in your browser only.</p>
+</section>
+
 <hr>
 <footer>Natal FP&amp;A is an internal tool. It is not offered to, sold to, or usable by the public.<br>
 Contact: <a href="mailto:max@natal.app">max@natal.app</a></footer>
-</main></body></html>
+</main>
+<script>
+  // Intuit redirects here with ?code=...&realmId=...&state=... after consent.
+  // Everything stays client side; the values are only displayed for copying.
+  var params = new URLSearchParams(window.location.search);
+  if (params.get('code')) {
+    document.getElementById('intro').style.display = 'none';
+    document.getElementById('landing').style.display = 'block';
+    document.getElementById('code').textContent = params.get('code');
+    document.getElementById('realm').textContent = params.get('realmId') || '(not provided)';
+  }
+</script>
+</body></html>
